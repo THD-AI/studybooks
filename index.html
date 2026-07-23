@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="description" content="Exam studybooks for the AIN-B summer semester 2026 courses.">
+<title>Course Studybooks — SS26</title>
+<style>
+  :root{
+    --bg:#fbfaf8; --panel:#ffffff; --ink:#1c1b19; --muted:#6b6863;
+    --line:#e5e1da; --accent:#8a5a2b; --accent-soft:#f3ece3;
+    --shadow:0 1px 2px rgba(28,27,25,.05), 0 8px 24px -12px rgba(28,27,25,.18);
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#131211; --panel:#1c1a18; --ink:#eceae6; --muted:#9c968d;
+      --line:#2e2b27; --accent:#d3a06a; --accent-soft:#2a231b;
+      --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.7);
+    }
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font:16px/1.6 ui-sans-serif,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    padding:max(1.5rem,env(safe-area-inset-top)) 1.25rem 4rem;
+  }
+  .wrap{max-width:56rem;margin:0 auto}
+  header{padding:1rem 0 2rem;border-bottom:1px solid var(--line);margin-bottom:2rem}
+  .eyebrow{
+    font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;
+    color:var(--accent);font-weight:600;margin:0 0 .5rem
+  }
+  h1{font-size:clamp(1.75rem,6vw,2.5rem);line-height:1.15;margin:0 0 .6rem;letter-spacing:-.02em}
+  .lede{color:var(--muted);margin:0;max-width:44rem}
+  .grid{display:grid;gap:1rem;grid-template-columns:1fr}
+  @media (min-width:46rem){.grid{grid-template-columns:1fr 1fr}}
+  .card{
+    display:flex;flex-direction:column;background:var(--panel);
+    border:1px solid var(--line);border-radius:14px;padding:1.15rem 1.25rem;
+    box-shadow:var(--shadow);
+  }
+  .card h2{font-size:1.1rem;margin:0 0 .35rem;letter-spacing:-.01em}
+  .card h2 a{color:inherit;text-decoration:none}
+  .card h2 a::after{content:"";position:absolute;inset:0}
+  .card{position:relative}
+  .card h2 a:hover{color:var(--accent)}
+  .card p{margin:0 0 .9rem;color:var(--muted);font-size:.925rem;flex:1}
+  .extras{display:flex;flex-wrap:wrap;gap:.5rem;position:relative;z-index:1}
+  .chip{
+    font-size:.8rem;text-decoration:none;color:var(--accent);
+    background:var(--accent-soft);border:1px solid var(--line);
+    padding:.3rem .65rem;border-radius:999px;
+  }
+  .chip:hover{border-color:var(--accent)}
+  footer{margin-top:2.5rem;padding-top:1.5rem;border-top:1px solid var(--line);color:var(--muted);font-size:.85rem}
+  footer p{margin:0 0 .6rem}
+  footer a{color:var(--accent)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <p class="eyebrow">AIN-B &middot; Summer Semester 2026</p>
+    <h1>Course Studybooks</h1>
+    <p class="lede">Self-contained, exam-oriented studybooks for the SS26 courses. Each one opens as a single page &mdash; readable offline once loaded, and built to work on a phone.</p>
+  </header>
+
+  <main class="grid">
+    <article class="card">
+      <h2><a href="ss26/autonomous-robotics/">Autonomous Robotics</a></h2>
+      <p>Ten modules from transformations and kinematics through sensing and control, each keyed to the positions on the permitted formula sheet.</p>
+      <div class="extras"><a class="chip" href="ss26/autonomous-robotics/cheatsheet.html">Cheat sheet</a></div>
+    </article>
+
+    <article class="card">
+      <h2><a href="ss26/algorithms-and-data-structures/">Algorithms &amp; Data Structures</a></h2>
+      <p>Complexity analysis, lists, recursion, sorting, graphs and selected topics &mdash; written around the hand-worked reasoning the exam awards marks for.</p>
+      <div class="extras"><a class="chip" href="ss26/algorithms-and-data-structures/cheatsheet.html">Cheat sheet</a></div>
+    </article>
+
+    <article class="card">
+      <h2><a href="ss26/databases/">Database Engineering</a></h2>
+      <p>Relational design and the relational model, SQL DDL and DML, plus recognising the question type and showing just enough working.</p>
+      <div class="extras"><a class="chip" href="ss26/databases/cheatsheet.html">Cheat sheet</a></div>
+    </article>
+
+    <article class="card">
+      <h2><a href="ss26/operating-systems-and-networks/">Operating Systems &amp; Networks</a></h2>
+      <p>Processes, file systems and memory management, then network performance, topologies, reference models and protocols.</p>
+      <div class="extras">
+        <a class="chip" href="ss26/operating-systems-and-networks/cheatsheet-v3.html">Cheat sheet</a>
+        <a class="chip" href="ss26/operating-systems-and-networks/cheatsheet.html">Cheat sheet (v1)</a>
+      </div>
+    </article>
+
+    <article class="card">
+      <h2><a href="ss26/generative-ai-1/">Generative AI with Transformers I</a></h2>
+      <p>From tokenisation and word embeddings to attention, the Transformer architecture, decoding strategies and scaling laws.</p>
+      <div class="extras"><a class="chip" href="ss26/generative-ai-1/perplexity-card.html">Perplexity card</a></div>
+    </article>
+
+    <article class="card">
+      <h2><a href="ss26/generative-ai-2/">Generative AI with Transformers II</a></h2>
+      <p>Markov models, word2vec, RNN and LSTM generators, transformer-based models, state-space models, RAG and AI-assisted programming.</p>
+    </article>
+
+    <article class="card">
+      <h2><a href="ss26/human-machine-interaction/">Human Factors &amp; HMI</a></h2>
+      <p>Perception and cognition, gulfs and constraints, information visualisation and dashboards, and the usability engineering cycle.</p>
+    </article>
+  </main>
+
+  <footer>
+    <p>Personal study notes written from the SS26 lecture material. They summarise and reorganise that material for revision &mdash; they are not a substitute for the official course sources, and they are not endorsed by the university or the lecturers.</p>
+    <p>Source lecture slides, exercise sheets and past papers are not published here, so citation links pointing to those PDFs only resolve in the local course folder.</p>
+  </footer>
+</div>
+</body>
+</html>
