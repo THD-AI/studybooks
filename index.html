@@ -7,17 +7,26 @@
 <meta name="description" content="Exam studybooks for the AIN-B summer semester 2026 courses.">
 <title>Course Studybooks — SS26</title>
 <style>
+  /* THD corporate colours: --thd-blau #1a4273, --donau-blau #009fe3 */
   :root{
-    --bg:#fbfaf8; --panel:#ffffff; --ink:#1c1b19; --muted:#6b6863;
-    --line:#e5e1da; --accent:#8a5a2b; --accent-soft:#f3ece3;
-    --shadow:0 1px 2px rgba(28,27,25,.05), 0 8px 24px -12px rgba(28,27,25,.18);
+    --thd-blau:#1a4273; --donau-blau:#009fe3;
+    --bg:#f4f7fa; --panel:#ffffff; --ink:#2b3440; --heading:var(--thd-blau);
+    --muted:#5f6b7a; --line:#dbe3ec; --accent:var(--thd-blau);
+    /* Donau-blau itself is too light for small text on a light ground (2.8:1) */
+    --rule:#00719e; --chip-ink:#12558a; --chip-bg:#e7f5fd;
+    --shadow:0 1px 2px rgba(26,66,115,.06), 0 8px 24px -12px rgba(26,66,115,.28);
   }
   @media (prefers-color-scheme: dark){
     :root{
-      --bg:#131211; --panel:#1c1a18; --ink:#eceae6; --muted:#9c968d;
-      --line:#2e2b27; --accent:#d3a06a; --accent-soft:#2a231b;
-      --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.7);
+      --bg:#0e1926; --panel:#16253a; --ink:#e6edf6; --heading:#ffffff;
+      --muted:#9db0c6; --line:#24374f; --accent:var(--donau-blau);
+      --rule:var(--donau-blau); --chip-ink:#7cd0f7; --chip-bg:#12314b;
+      --shadow:0 1px 2px rgba(0,0,0,.45), 0 8px 24px -12px rgba(0,0,0,.75);
     }
+  }
+  body::before{
+    content:"";position:fixed;top:0;left:0;right:0;height:4px;z-index:2;
+    background:linear-gradient(90deg,var(--thd-blau),var(--donau-blau));
   }
   *{box-sizing:border-box}
   html{-webkit-text-size-adjust:100%}
@@ -30,9 +39,9 @@
   header{padding:1rem 0 2rem;border-bottom:1px solid var(--line);margin-bottom:2rem}
   .eyebrow{
     font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;
-    color:var(--accent);font-weight:600;margin:0 0 .5rem
+    color:var(--rule);font-weight:700;margin:0 0 .5rem
   }
-  h1{font-size:clamp(1.75rem,6vw,2.5rem);line-height:1.15;margin:0 0 .6rem;letter-spacing:-.02em}
+  h1{font-size:clamp(1.75rem,6vw,2.5rem);line-height:1.15;margin:0 0 .6rem;letter-spacing:-.02em;color:var(--heading)}
   .lede{color:var(--muted);margin:0;max-width:44rem}
   .grid{display:grid;gap:1rem;grid-template-columns:1fr}
   @media (min-width:46rem){.grid{grid-template-columns:1fr 1fr}}
@@ -41,19 +50,20 @@
     border:1px solid var(--line);border-radius:14px;padding:1.15rem 1.25rem;
     box-shadow:var(--shadow);
   }
-  .card h2{font-size:1.1rem;margin:0 0 .35rem;letter-spacing:-.01em}
+  .card h2{font-size:1.1rem;margin:0 0 .35rem;letter-spacing:-.01em;color:var(--heading)}
   .card h2 a{color:inherit;text-decoration:none}
   .card h2 a::after{content:"";position:absolute;inset:0}
-  .card{position:relative}
-  .card h2 a:hover{color:var(--accent)}
+  .card{position:relative;transition:border-color .15s ease}
+  .card:hover{border-color:var(--donau-blau)}
+  .card h2 a:hover{color:var(--donau-blau)}
   .card p{margin:0 0 .9rem;color:var(--muted);font-size:.925rem;flex:1}
   .extras{display:flex;flex-wrap:wrap;gap:.5rem;position:relative;z-index:1}
   .chip{
-    font-size:.8rem;text-decoration:none;color:var(--accent);
-    background:var(--accent-soft);border:1px solid var(--line);
+    font-size:.8rem;text-decoration:none;color:var(--chip-ink);
+    background:var(--chip-bg);border:1px solid var(--line);
     padding:.3rem .65rem;border-radius:999px;
   }
-  .chip:hover{border-color:var(--accent)}
+  .chip:hover{border-color:var(--donau-blau)}
   footer{margin-top:2.5rem;padding-top:1.5rem;border-top:1px solid var(--line);color:var(--muted);font-size:.85rem}
   footer p{margin:0 0 .6rem}
   footer a{color:var(--accent)}
