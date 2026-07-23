@@ -1,0 +1,557 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Perplexity Study Card</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #172033;
+      --muted: #5b6475;
+      --line: #d8dee9;
+      --paper: #f7f8fb;
+      --card: #ffffff;
+      --blue: #174a7c;
+      --teal: #07817d;
+      --red: #b42318;
+      --amber: #b7791f;
+      --green: #2f855a;
+      --violet: #5a4fcf;
+      --shadow: 0 24px 70px rgba(23, 32, 51, 0.16);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 28px;
+      background:
+        linear-gradient(135deg, rgba(23, 74, 124, 0.08), rgba(7, 129, 125, 0.08)),
+        var(--paper);
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.45;
+    }
+
+    .card {
+      width: min(1120px, 100%);
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    header {
+      display: grid;
+      gap: 10px;
+      padding: 28px 32px 22px;
+      color: #fff;
+      background: linear-gradient(135deg, var(--blue), #0f766e);
+    }
+
+    .eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.82rem;
+      font-weight: 760;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      min-height: 28px;
+      padding: 3px 10px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.18);
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      white-space: nowrap;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(1.8rem, 4.5vw, 3rem);
+      line-height: 1.05;
+      letter-spacing: 0;
+    }
+
+    header p {
+      max-width: 76ch;
+      margin: 0;
+      color: rgba(255, 255, 255, 0.86);
+      font-size: 1rem;
+    }
+
+    main {
+      display: grid;
+      gap: 22px;
+      padding: 26px 32px 30px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 22px;
+      align-items: stretch;
+    }
+
+    section {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 18px;
+      background: #fff;
+    }
+
+    h2 {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 0 0 14px;
+      font-size: 1rem;
+      letter-spacing: 0;
+    }
+
+    h2 span {
+      display: grid;
+      place-items: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: rgba(23, 74, 124, 0.1);
+      color: var(--blue);
+      font-size: 0.9rem;
+    }
+
+    .corpus {
+      display: grid;
+      gap: 8px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      font-family: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace;
+      font-size: 0.94rem;
+    }
+
+    .corpus li {
+      padding: 10px 12px;
+      border-radius: 8px;
+      background: #f1f5f9;
+      border: 1px solid #e2e8f0;
+    }
+
+    .target {
+      margin-top: 14px;
+      padding: 12px;
+      border-left: 4px solid var(--teal);
+      background: #ecfdf5;
+      border-radius: 0 8px 8px 0;
+      font-weight: 720;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      overflow: hidden;
+      border-radius: 8px;
+      font-size: 0.92rem;
+    }
+
+    th,
+    td {
+      padding: 10px 11px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      color: #fff;
+      background: var(--blue);
+      font-weight: 760;
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    code,
+    .mono {
+      font-family: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace;
+      overflow-wrap: anywhere;
+    }
+
+    .formula {
+      display: grid;
+      gap: 10px;
+      padding: 15px;
+      border-radius: 8px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      font-size: 1rem;
+    }
+
+    .formula strong {
+      color: var(--blue);
+    }
+
+    .chain {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    .step {
+      min-height: 122px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      padding: 12px;
+      background: #fff;
+    }
+
+    .word {
+      display: inline-flex;
+      margin-bottom: 8px;
+      padding: 4px 9px;
+      border-radius: 999px;
+      background: rgba(7, 129, 125, 0.11);
+      color: #075e59;
+      font-weight: 760;
+    }
+
+    .fraction {
+      font-size: 1.45rem;
+      font-weight: 800;
+      color: var(--ink);
+    }
+
+    .sub {
+      color: var(--muted);
+      font-size: 0.84rem;
+    }
+
+    .result {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 18px;
+      align-items: center;
+      border-color: rgba(180, 35, 24, 0.3);
+      background: #fff7ed;
+    }
+
+    .big-number {
+      display: grid;
+      place-items: center;
+      width: min(210px, 35vw);
+      aspect-ratio: 1;
+      border-radius: 50%;
+      background: #fff;
+      border: 9px solid rgba(180, 35, 24, 0.16);
+      color: var(--red);
+      font-size: clamp(2.1rem, 7vw, 4rem);
+      font-weight: 850;
+      line-height: 1;
+    }
+
+    .bars {
+      display: grid;
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .bar {
+      display: grid;
+      grid-template-columns: 90px 1fr 74px;
+      gap: 10px;
+      align-items: center;
+      font-size: 0.9rem;
+    }
+
+    .track {
+      height: 12px;
+      border-radius: 999px;
+      overflow: hidden;
+      background: #e5e7eb;
+    }
+
+    .fill {
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--teal), var(--violet));
+    }
+
+    .notes {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .note {
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: #f8fafc;
+      font-size: 0.92rem;
+    }
+
+    .note strong {
+      color: var(--blue);
+    }
+
+    footer {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 18px;
+      justify-content: space-between;
+      padding: 16px 32px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      background: #f8fafc;
+      font-size: 0.86rem;
+    }
+
+    @media (max-width: 860px) {
+      body {
+        padding: 14px;
+      }
+
+      header,
+      main,
+      footer {
+        padding-left: 18px;
+        padding-right: 18px;
+      }
+
+      .grid,
+      .chain,
+      .notes,
+      .result {
+        grid-template-columns: 1fr;
+      }
+
+      .big-number {
+        width: min(180px, 70vw);
+        justify-self: center;
+      }
+
+      .bar {
+        grid-template-columns: 72px 1fr 58px;
+      }
+
+      .eyebrow {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      table,
+      thead,
+      tbody,
+      tr,
+      th,
+      td {
+        display: block;
+      }
+
+      thead {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip: rect(0 0 0 0);
+        white-space: nowrap;
+      }
+
+      tr {
+        margin-bottom: 12px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        overflow: hidden;
+        background: #fff;
+      }
+
+      tr:last-child {
+        margin-bottom: 0;
+      }
+
+      td {
+        display: grid;
+        grid-template-columns: minmax(92px, 36%) 1fr;
+        gap: 10px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      td::before {
+        content: attr(data-label);
+        color: var(--blue);
+        font-weight: 800;
+      }
+
+      td:last-child {
+        border-bottom: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <article class="card" aria-labelledby="title">
+    <header>
+      <div class="eyebrow">
+        <span class="badge">🔴 Exam relevance: high</span>
+        <span>Language model evaluation</span>
+      </div>
+      <h1 id="title">Perplexity, calculated from corpus counts</h1>
+      <p>
+        Perplexity measures average surprise. Lower perplexity means the model assigns higher probability to the observed words.
+      </p>
+    </header>
+
+    <main>
+      <div class="grid">
+        <section>
+          <h2><span>1</span> Tiny training corpus</h2>
+          <ul class="corpus">
+            <li>&lt;s&gt; you like tea &lt;/s&gt;</li>
+            <li>&lt;s&gt; you like coffee &lt;/s&gt;</li>
+            <li>&lt;s&gt; you drink tea &lt;/s&gt;</li>
+            <li>&lt;s&gt; i like tea &lt;/s&gt;</li>
+          </ul>
+          <div class="target">
+            Test sequence W = "you like tea" with N = 3 predicted words.
+          </div>
+        </section>
+
+        <section>
+          <h2><span>2</span> Bigram rule for p</h2>
+          <div class="formula">
+            <div><strong>Model:</strong> use previous word as context.</div>
+            <div class="mono">P(next | context) = count(context, next) / count(context)</div>
+            <div>
+              This is an unsmoothed maximum-likelihood estimate: just count from the corpus, then divide.
+            </div>
+          </div>
+          <div class="bars" aria-label="Probability bars">
+            <div class="bar">
+              <span>P(you|&lt;s&gt;)</span>
+              <span class="track"><span class="fill" style="width:75%"></span></span>
+              <strong>0.75</strong>
+            </div>
+            <div class="bar">
+              <span>P(like|you)</span>
+              <span class="track"><span class="fill" style="width:66.7%"></span></span>
+              <strong>0.667</strong>
+            </div>
+            <div class="bar">
+              <span>P(tea|like)</span>
+              <span class="track"><span class="fill" style="width:66.7%"></span></span>
+              <strong>0.667</strong>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <section>
+        <h2><span>3</span> Where each probability comes from</h2>
+        <table aria-label="Bigram probability count table">
+          <thead>
+            <tr>
+              <th>Needed probability</th>
+              <th>Count evidence in corpus</th>
+              <th>Calculation</th>
+              <th>p</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="mono" data-label="Needed p">P(you | &lt;s&gt;)</td>
+              <td data-label="Evidence">4 sentences start after &lt;s&gt;; 3 start with "you".</td>
+              <td class="mono" data-label="Calculation">count(&lt;s&gt;, you) / count(&lt;s&gt;) = 3 / 4</td>
+              <td data-label="p"><strong>0.75</strong></td>
+            </tr>
+            <tr>
+              <td class="mono" data-label="Needed p">P(like | you)</td>
+              <td data-label="Evidence">"you" appears 3 times; it is followed by "like" 2 times.</td>
+              <td class="mono" data-label="Calculation">count(you, like) / count(you) = 2 / 3</td>
+              <td data-label="p"><strong>0.667</strong></td>
+            </tr>
+            <tr>
+              <td class="mono" data-label="Needed p">P(tea | like)</td>
+              <td data-label="Evidence">"like" appears 3 times; it is followed by "tea" 2 times.</td>
+              <td class="mono" data-label="Calculation">count(like, tea) / count(like) = 2 / 3</td>
+              <td data-label="p"><strong>0.667</strong></td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section>
+        <h2><span>4</span> Multiply the chain, then invert-root</h2>
+        <div class="chain">
+          <div class="step">
+            <span class="word">you</span>
+            <div class="fraction">3 / 4</div>
+            <div class="sub">from sentence starts</div>
+          </div>
+          <div class="step">
+            <span class="word">like</span>
+            <div class="fraction">2 / 3</div>
+            <div class="sub">from words after "you"</div>
+          </div>
+          <div class="step">
+            <span class="word">tea</span>
+            <div class="fraction">2 / 3</div>
+            <div class="sub">from words after "like"</div>
+          </div>
+        </div>
+        <div class="formula" style="margin-top: 14px;">
+          <div class="mono">P(W) = P(you|&lt;s&gt;) · P(like|you) · P(tea|like)</div>
+          <div class="mono">P(W) = (3/4) · (2/3) · (2/3) = 1/3 ≈ 0.333</div>
+          <div class="mono">ppl(W) = P(W)<sup>-1/N</sup> = (1/3)<sup>-1/3</sup> = 3<sup>1/3</sup></div>
+        </div>
+      </section>
+
+      <section class="result">
+        <div>
+          <h2><span>5</span> Final answer</h2>
+          <p>
+            The model assigns probability <strong>1/3</strong> to the three-word sequence "you like tea".
+            Its perplexity is therefore:
+          </p>
+          <div class="formula">
+            <div class="mono">ppl("you like tea") ≈ 1.442</div>
+          </div>
+          <p>
+            Interpretation: on average, the model is about as uncertain as choosing among
+            <strong>1.44 equally likely next words</strong> at each step.
+          </p>
+        </div>
+        <div class="big-number" aria-label="Perplexity result">1.44</div>
+      </section>
+
+      <div class="notes">
+        <div class="note">
+          <strong>On paper recipe:</strong> count the relevant transitions, divide to get probabilities, multiply them, then take the negative N-th root.
+        </div>
+        <div class="note">
+          <strong>Important:</strong> if a needed bigram never appears, unsmoothed probability becomes 0 and perplexity blows up. Smoothing fixes this.
+        </div>
+        <div class="note">
+          <strong>Boundary tokens:</strong> this card predicts only the 3 words. If the exam includes &lt;/s&gt;, include that probability and adjust N.
+        </div>
+      </div>
+    </main>
+
+    <footer>
+      <span>Source trace: 2-presentation.pdf, perplexity definition from slide/page shown as 24/28, viewer page 39/43.</span>
+      <span>Generated example corpus; no professor slide screenshots used.</span>
+    </footer>
+  </article>
+</body>
+</html>

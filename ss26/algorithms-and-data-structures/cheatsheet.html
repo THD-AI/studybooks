@@ -1,0 +1,163 @@
+﻿<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ADS — A4 copy-master v3 (one handwritten side)</title>
+<style>
+  :root{color-scheme:light}
+  *{box-sizing:border-box}
+  body{font:8.35pt/1.28 "Segoe UI",Arial,sans-serif;color:#000;background:#fff;margin:0;padding:5mm}
+  .cols{column-count:3;column-gap:4mm;column-rule:.5px solid #999}
+  h1{font-size:10.5pt;margin:0 0 1.6mm;border-bottom:2px solid #000;padding-bottom:.8mm}
+  h1 small{font-weight:400;font-size:7pt}
+  h2{font-size:8pt;background:#000;color:#fff;padding:.25mm 1.2mm;margin:1.4mm 0 .7mm;break-after:avoid}
+  h2 .opt{background:#fff;color:#000;border-radius:2px;font-size:6.3pt;padding:0 .8mm;margin-left:1mm;vertical-align:.2mm}
+  p{margin:.5mm 0}
+  pre{font:7.4pt/1.24 Consolas,monospace;background:#f2f2f2;border:.5px solid #bbb;border-radius:2px;padding:.8mm 1.2mm;margin:.7mm 0;break-inside:avoid;white-space:pre}
+  table{border-collapse:collapse;width:100%;font-size:7.1pt;margin:.7mm 0;break-inside:avoid}
+  td,th{border:.5px solid #888;padding:.2mm .7mm;text-align:center}
+  th{background:#e8e8e8}
+  .b{font-weight:700}.box{border:1px solid #000;padding:.7mm 1mm;margin:.7mm 0;break-inside:avoid}
+  .m{font-family:Cambria,Georgia,serif}
+  .tiny{font-size:6.5pt;color:#222}
+  .star{font-weight:900}
+  .noprint{background:#ffedcc;border:1px solid #d90;padding:2mm;margin-bottom:3mm;font-size:9pt}
+  @media print{@page{size:A4;margin:6mm}body{padding:0}.noprint{display:none}}
+</style></head><body>
+<div class="noprint"><b>v3 — rebuilt after the professor call on 19 July.</b> This is a copy-master, not an exam aid: the exam allows <b>one handwritten A4 side</b> + non-CAS calculator. Print (Ctrl+P, A4, 100%, one side) and transcribe by hand, same layout. <b>★ = the professor confirmed it for THIS exam</b> — copy those sections first and biggest. Strassen and the Bloom ε-derivation were demoted per his statements; Akra–Bazzi was promoted to a full section (one problem guaranteed, integer p). Everything machine-verified.</div>
+
+<h1>ADS · one A4 side · v3 <small>· ★ = prof-confirmed 19.07 · Python code · name theorems + why they apply · unsupported = 0 · 2 of 3 × 25 · 20/50 passes</small></h1>
+<div class="cols">
+
+<h2>1 · Complexity & search ladder</h2>
+<p class="m">O ≤ · Ω ≥ · Θ = (tight). Drop constants + lower terms.</p>
+<p><span class="b">Lookup:</span> naive unsorted <span class="m">O(n)</span> · binary (sorted!) <span class="m">O(log n)</span> · balanced BST <span class="m">O(log n)</span> · hash <span class="m">exp O(1) / worst O(n)</span> (all keys collide) · Bloom <span class="m">O(k)=O(1)</span>, FP yes / FN no.</p>
+<p><span class="b">No RAM:</span> disk I/O dominates → B-tree / Bloom prefilter.</p>
+<p><span class="b">Loops:</span> nested independent = multiply; <span class="m">Σ1..n = n(n+1)/2 = Θ(n²)</span>; halving loop = Θ(log n). <span class="b">Space:</span> recursion depth = stack: bin-search rec <span class="m">O(log n)</span>, iter <span class="m">O(1)</span>.</p>
+
+<h2>2 · Master theorem (name + check!)</h2>
+<div class="box m">T(n) = a·T(n/b) + O(n<sup>d</sup>), a≥1, b&gt;1:<br>
+d &gt; log_b a → <b>O(n<sup>d</sup>)</b> · d = log_b a → <b>O(n<sup>d</sup> log n)</b> · d &lt; log_b a → <b>O(n<sup>log_b a</sup>)</b></div>
+<table><tr><th>rec</th><th>a,b,d</th><th>→</th></tr>
+<tr><td>binary search</td><td>1,2,0</td><td class="m">log n</td></tr>
+<tr><td>merge sort (k-way too)</td><td>2,2,1</td><td class="m">n log n</td></tr></table>
+<p>3-branch naive rec (deg): <span class="m">T ≤ 3T(n−1)+O(1) → O(3ⁿ)</span>; k-branch → <span class="m">O(kⁿ)</span>. deg: 1,1,1,3,5,9,17…</p>
+<p class="b m">Unequal split sizes ⇒ Master NOT applicable — say it, then → ★§3.</p>
+
+<h2><span class="star">★</span> 3 · Akra–Bazzi (1 problem GUARANTEED)</h2>
+<div class="box m">T(n) = Σ aᵢ·T(n/bᵢ) + g(n)<br>
+1. find p: <b>Σ aᵢ·(1/bᵢ)ᵖ = 1</b> — p is a small integer, TEST:<br>
+&nbsp;p=0 ⇔ Σaᵢ=1 · p=1 ⇔ Σaᵢ/bᵢ=1 · p=2 ⇔ Σaᵢ/bᵢ²=1<br>
+2. g(n)=Θ(n<sup>d</sup>) → compare d vs p (integral collapses):<br>
+&nbsp;<b>d&gt;p → Θ(n<sup>d</sup>) · d=p → Θ(nᵖ log n) · d&lt;p → Θ(nᵖ)</b><br>
+<span class="tiny">full form: T=Θ(nᵖ(1+∫₁ⁿ g(u)/u^{p+1}du)) — cite it, then use trichotomy</span></div>
+<p class="m">Ex: T=T(n/2)+T(n/3)+T(n/6)+n: ½+⅓+⅙=1 → p=1; d=1=p → <b>Θ(n log n)</b>.<br>
+Ex: T=3T(n/2)+4T(n/4)+n²: ¾+4/16=1 → p=2; d=2=p → <b>Θ(n² log n)</b>.<br>
+MoM ref: T=T(n/5)+T(7n/10)+O(n): p≈0.84&lt;1=d → <b>Θ(n)</b>.</p>
+<p class="tiny">Answer order: (1) “Master N/A — unequal splits” (2) Σaᵢ(1/bᵢ)ᵖ=1 with the integer test shown (3) d vs p (4) boxed Θ. If p not integer: bracket on calculator like binary search (won't happen per prof).</p>
+
+<h2>4 · Sorting</h2>
+<table><tr><th></th><th>best</th><th>avg</th><th>worst</th><th>spc</th><th>st?</th><th>ip?</th></tr>
+<tr><td>bubble</td><td class="m">n²*</td><td class="m">n²</td><td class="m">n²</td><td>1</td><td>Y</td><td>Y</td></tr>
+<tr><td>selection</td><td class="m">n²</td><td class="m">n²</td><td class="m">n²</td><td>1</td><td>N</td><td>Y</td></tr>
+<tr><td>insertion</td><td class="m">n</td><td class="m">n²</td><td class="m">n²</td><td>1</td><td>Y</td><td>Y</td></tr>
+<tr><td>merge</td><td class="m">n lg n</td><td class="m">n lg n</td><td class="m">n lg n</td><td class="m">n</td><td>Y</td><td>N</td></tr>
+<tr><td>quick</td><td class="m">n lg n</td><td class="m">n lg n</td><td class="m">n²</td><td class="m">lg n</td><td>N</td><td>Y</td></tr>
+<tr><td>heap</td><td class="m">n lg n</td><td class="m">n lg n</td><td class="m">n lg n</td><td>1</td><td>N</td><td>Y</td></tr></table>
+<p class="tiny">*bubble + swapped-flag → best O(n). quick worst: sorted/equal + bad pivot; fix: random / median-of-3. stable = equal keys keep order.</p>
+<p><span class="b">Bound:</span> comparison ≥ <span class="m">log₂(n!) = Ω(n log n)</span> (decision tree). Beat: counting/bucket <span class="m">O(n+k)</span>, radix <span class="m">O(dn)</span> — bounded keys.</p>
+<pre>def merge(S1, S2, S):
+  i = j = 0
+  while i + j &lt; len(S):
+    if j == len(S2) or \
+       (i &lt; len(S1) and S1[i] &lt; S2[j]):
+      S[i+j] = S1[i]; i += 1
+    else:
+      S[i+j] = S2[j]; j += 1</pre>
+<p class="tiny">merge sort: n&lt;2 return · split · recurse · merge. k-way: T=kT(n/k)+O(n) → same n log n.</p>
+<p><span class="star">★</span> <span class="b">BogoSort:</span> shuffle, check sorted O(n), repeat. Best O(n), expected O(n·n!), worst ∞. <span class="b">Quantum Bogo:</span> superpose all n! perms, measure; sorted branch → done in O(n) (joke: destroy unsorted universes). Not real: measurement collapses to ONE random perm — parody, unlike Grover's genuine O(√n).</p>
+
+<h2>5 · Recursion & DP</h2>
+<pre>def f(n, memo=None):          # top-down DP
+  if memo is None: memo = {}
+  if n &lt; 3: return 1          # base
+  if n not in memo:
+    memo[n] = (f(n-1,memo)+f(n-2,memo)
+               +f(n-3,memo))
+  return memo[n]              # O(n) time</pre>
+<p><span class="m">from functools import lru_cache · @lru_cache(maxsize=None)</span> on naive rec. Bottom-up: rolling vars <span class="m">a,b,c=b,c,a+b+c</span> → O(1) space.</p>
+<pre>def binary_search(data, t):  # iter
+  lo, hi = 0, len(data)-1
+  while lo &lt;= hi:
+    mid = (lo+hi)//2
+    if data[mid]==t: return True
+    if data[mid]&lt;t: lo = mid+1
+    else: hi = mid-1
+  return False</pre>
+<pre>def bisection(f,a,b,tol,max_it):
+  if sign(f(a))==sign(f(b)):
+    raise ValueError   # need sign change
+  for _ in range(max_it):
+    m = (a+b)/2
+    if abs(f(m)) &lt; tol:
+      return m      # tol: |f(m)|&lt;tol
+    if sign(f(m))==sign(f(a)): a = m
+    else: b = m
+  return (a+b)/2</pre>
+<p class="tiny">sign: −1/0/1 if-chain. Invariant: sign(f(a))≠sign(f(b)) (IVT). min/max rec: base=last elem; combine min/max(cur, rest).</p>
+
+<h2>6 · Lists, arrays, ADTs</h2>
+<p><span class="b">linked:</span> O(1) head ins/del, no resize · <span class="b">array:</span> O(1) index, cache-local, append O(1) amortized (doubling).</p>
+<pre>insert after cur: node.next = cur.next
+                  cur.next = node  # order!
+remove_first: if head:
+  head = head.next; size -= 1
+def __iter__(self):           # generator
+  cur = self._head
+  while cur is not None:
+    yield cur._element
+    cur = cur._next_element</pre>
+<p class="tiny">walk k hops → (k+1)-th node · middle: size//2−1 hops → node before middle · odd size → raise ValueError · always ±size · empty case first!</p>
+<p><span class="b">MyArray.insert:</span> neg k → k+=n · clamp · full → _resize(2·cap) · shift n→k backwards · A[k]=v · n+=1. <span class="b">__setitem__</span>: neg fix + bounds only.</p>
+<p><span class="b">Dunders:</span> obj[k]=v→__setitem__ · obj[k]→__getitem__ · len→__len__ · for→__iter__. <span class="b">Queue:</span> FIFO · circular: front idx + mod. Stack: LIFO.</p>
+
+<h2><span class="star">★</span> 7 · Graphs (def + matrix confirmed)</h2>
+<p><span class="m">G=(V,E)</span>; weighted digraph <span class="m">G=(V,E,w), w:E→ℝ</span>, E ordered pairs, A asymmetric. <b>Declare “row = from”.</b> 0 = no edge. List V and E explicitly, then the matrix.</p>
+<p class="tiny">adj-matrix O(V²), edge test O(1) · adj-list O(V+E). Frontier = discovered, not yet expanded. list.pop(0) Θ(n) → deque.popleft() O(1). BFS queue · DFS stack · Dijkstra min-heap O((V+E)log V).</p>
+
+<h2><span class="star">★</span> 8 · Trees: symmetric + ID3 (15 pts!)</h2>
+<pre>def is_symmetric(node):       # whole thing!
+  if node is None: return True
+  return mirror(node.left, node.right)
+def mirror(l, r):
+  if l is None and r is None: return True
+  if l is None or r is None:  return False
+  return mirror(l.left, r.right) and \
+         mirror(l.right, r.left)</pre>
+<p class="tiny">symmetric = equal to its inverse · STRUCTURE only, ignore values · single child breaks symmetry unless mirrored. Tree sum/height: val + recurse children, guard None. Traversals: pre NLR / in LNR / post LRN.</p>
+<div class="box m"><b>ID3 (full tree = 15 pts ≈ 25 min):</b> H(S) = −Σ p·log₂p · Gain(S,a) = H(S) − Σ_v (|S_v|/|S|)·H(S_v)<br>
+1. H(S) &nbsp;2. per attr: split counts → weighted rem → gain &nbsp;3. max gain = node; <b>pure branch = leaf, no math — write “pure → leaf”</b> &nbsp;4. recurse per branch, remaining attrs.<br>
+log₂x = ln x ÷ ln 2 · <b>ties happen — state, pick one</b> · 1-value attr in subset → gain 0 · end check: run all rows down the tree.</div>
+<div class="box"><span class="b">H(pos,neg):</span> <span class="m">1,1→1 · 2,1→.918 · 3,1→.811 · 4,1→.722 · 5,1→.650 · 3,2→.971 · 4,2→.918 · 5,2→.863 · 5,3→.954 · 4,3→.985 · n,0→0 · n,n→1</span></div>
+
+<h2><span class="star">★</span> 9 · Hashing & Bloom (applied!)</h2>
+<p><span class="b">Hash table task:</span> given h(i) + keys → compute h per key (show the line), draw table, <b>chaining</b>: list per bucket in insertion order. Load α=m/n → exp O(1+α). No code needed.</p>
+<pre>def __setitem__(self, k, v):  # obj[k]=v
+  for item in self._table:
+    if k == item._key:
+      item._value = v; return
+  self._table.append(self._Item(k, v))</pre>
+<div class="box"><span class="b">★ Bloom applied (like tutorial):</span> bit array 0..n−1 all 0. <b>Insert</b> x: compute Hash₁..Hash_k(x), set those bits 1 (collisions just stay 1). <b>Query</b> y: compute k hashes; <b>any bit 0 ⇒ “definitely NOT in S”</b> (stop at first 0!); all 1 ⇒ “probably in S”. FP yes / FN no.<br>
+<span class="m"><b>Complexity O(k)=O(1) — depends on #hash functions k, NOT #elements m</b></span> — vs binary/BST O(log n), hash O(1) exp; Bloom = tiny memory, no removals.</p></div>
+<p class="m tiny">Theory (know, not quizzed): P(bit=0)=(1−1/n)^{km}≈e^{−km/n} ((1−1/n)ⁿ≈1/e) · ε=(1−e^{−km/n})^k · k*=(n/m)ln2 → integer, test neighbors. Ex: m=5,n=24: k=3, ε≈0.10 · m=20,n=100,k=3: P(0)=e^{−0.6}≈.549, ε≈.092.</p>
+<p class="tiny">Nested dict: defaultdict(dict) or create inner {} first.</p>
+
+<h2>10 · Quantum</h2>
+<p class="m">|a⟩ = α|0⟩+β|1⟩ · α,β ∈ ℂ amplitudes · P(0)=|α|², P(1)=|β|² · <b>|α|²+|β|²=1</b> · superposition until measured (bit: 0 or 1). X=[0 1;1 0] swaps α,β · H=1/√2[1 1;1 −1] → equal superposition.</p>
+<p class="tiny">Grover: unstructured search O(√n) vs O(n), quadratic. Shor: factoring, poly O((log N)³), exponential, breaks RSA. This year: quantum = the BogoSort task (§4) + maybe qubit def.</p>
+
+<h2>11 · Demoted (prof 19.07) <span class="opt">◇ safety</span></h2>
+<p class="tiny">◇ Strassen — NOT in this year's exam. Safety line: naive matmul O(n³) (n² entries × n); Strassen 7 mults: T=7T(n/2)+O(n²) → Master a=7,b=2,d=2: log₂7≈2.807&gt;2 → O(n^2.807). M's are given if ever asked; check C_ij = substitute, expand, cancel.<br>
+◇ Median-of-medians — nothing specific, no code. Groups of 5 → median of medians as pivot → T(n)=T(n/5)+T(7n/10)+O(n) → Θ(n) (the A–B reference).<br>
+<b>Strategy:</b> ID3 problem = 15/20-to-pass → pick it. ~38 min/problem. Stuck? leave the setup — method earns partial credit. Support everything.</p>
+</div>
+</body></html>
+

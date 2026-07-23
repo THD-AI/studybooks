@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22%3E%3Crect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%23102331%22/%3E%3Ctext x=%2216%22 y=%2222%22 text-anchor=%22middle%22 font-size=%2218%22 fill=%22white%22%3EDB%3C/text%3E%3C/svg%3E"><title>Database Engineering — Study-only Memory Copy-Master</title><style>
+@page{size:A4;margin:0}*{box-sizing:border-box}body{margin:0;background:#d8dde0;color:#111;font:10.2px/1.28 Arial,sans-serif}.aid{padding:16px;display:grid;gap:16px;justify-content:center}.aid-page{width:210mm;height:297mm;background:#fff;padding:7mm 8mm 6mm;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 6px 28px #71808a}.aid-head{display:grid;grid-template-columns:minmax(0,1fr) 50mm;align-items:start;gap:5mm;border-bottom:1.4mm solid #111;padding-bottom:3mm;margin-bottom:3mm}.aid-head>div{min-width:0}.aid-head p{margin:0 0 1mm;font-size:8px;font-weight:800;letter-spacing:.12em}.aid-head h1{margin:0;font:700 19px/1.1 Georgia,serif}.aid-head strong{width:50mm;border:1.2mm solid #111;padding:2mm 3mm;text-align:center;font-size:9px;line-height:1.25}.aid-grid{columns:2;column-gap:4mm;flex:1}.aid-grid section{break-inside:avoid;border-top:.6mm solid #222;padding:2mm 0 1mm;margin:0 0 2.5mm}.aid h2{font:800 11px/1.1 Arial,sans-serif;margin:0 0 1.3mm;text-transform:uppercase;letter-spacing:.035em}.aid p{margin:0 0 1.2mm}.aid ol,.aid ul{margin:0 0 1.5mm;padding-left:4.5mm}.aid li{margin:0 0 .7mm}.mini{background:#eee;padding:1.4mm;border-left:1mm solid #111}.order{font:800 9px/1.4 Consolas,monospace}.aid pre{white-space:pre-wrap;margin:1mm 0;background:#eee;border:1px solid #aaa;padding:1.5mm;font:8.2px/1.25 Consolas,monospace}.aid footer{border-top:.5mm solid #111;padding-top:1.7mm;font-size:8px;font-weight:700;text-align:center}@media print{body{background:#fff}.aid{padding:0;display:block}.aid-page{box-shadow:none;page-break-after:always}.aid-page:last-child{page-break-after:auto}}@media screen and (max-width:850px){.aid{padding:0;display:block}.aid-page{width:100%;height:auto;min-height:100vh;box-shadow:none}.aid-grid{columns:1}}
+</style></head><body>
+<main class="aid">
+<section class="aid-page">
+<header class="aid-head"><div><p>DATABASE ENGINEERING · MEMORY COPY-MASTER · V2 · 22 JUL</p><h1>Page 1 · ER → schema → 3NF</h1></div><strong>STUDY ONLY<br>NOT PERMITTED IN THE EXAM</strong></header>
+<div class="aid-grid">
+<section><h2>★ ER question: draw in this order</h2><ol><li>Nouns → entity rectangles; stable descriptors → attributes.</li><li>Underline each identifier. Split address only if the prompt exposes its parts.</li><li>Verbs → relationship diamonds. Put dates/quantity/price on the relationship they describe.</li><li>Add both cardinalities last; test with one sentence from each side.</li></ol><p class="mini"><b>M:N with history:</b> GUEST — BOOKS(start_date,end_date) — ROOM. Repeat booking means the relational key must distinguish dates.</p></section>
+<section><h2>★ ER → relations</h2><p><b>Entity</b> → table + PK. <b>1:N</b> → FK on N side. <b>1:1</b> → FK on mandatory/total side + UNIQUE. <b>M:N</b> → bridge with both FKs; add relationship attributes. <b>Multivalued</b> → own table. <b>Recursive</b> → self-FK or bridge.</p><p class="mini">HOTEL(<u>hotel_id</u>, …)<br>ROOM(<u>room_id</u>, hotel_id FK, type_id FK, …)<br>BOOKING(<u>room_id FK, guest_id FK, start_date</u>, end_date)</p></section>
+<section><h2>★ Key by closure</h2><p>Start with attributes never on any FD right-hand side. Repeatedly add RHS when LHS ⊆ closure. If closure = all attributes, it is a superkey. Remove each attribute in turn; if none can be removed, candidate key.</p><p class="mini">R(A,B,C,D,E), A→C, B→C, E→D: RHS={C,D}; start ABE; (ABE)<sup>+</sup>=ABCDE ⇒ key ABE.</p></section>
+<section><h2>★ Normal forms</h2><p><b>1NF</b> one value/cell. <b>2NF</b> 1NF + no non-prime attribute depends on a proper subset of a candidate key. <b>3NF</b> for every non-trivial X→A: X superkey or A prime. <b>BCNF</b> every determinant X is a superkey.</p><p class="mini">Decompose by meaning: STUDENT(sid,…), ACTIVITY(aid,…), PARTICIPATION(sid,aid,hours), CLASS(class,leader). Each fact lives once.</p></section>
+<section><h2>DDL frame</h2><pre>CREATE TABLE child (
+  id integer PRIMARY KEY,
+  parent_id integer NOT NULL,
+  amount numeric(10,2) CHECK (amount BETWEEN 0 AND 10000),
+  start_date date NOT NULL,
+  end_date date NOT NULL,
+  FOREIGN KEY (parent_id) REFERENCES parent(id),
+  CHECK (end_date > start_date)
+);</pre></section>
+<section><h2>Paper checks</h2><ul><li>Every table has a PK.</li><li>Every FK points to a declared PK/UNIQUE key.</li><li>ZIP/phone/card are text, not arithmetic numbers.</li><li>Bridge PK contains repeat discriminator when repeats are allowed.</li><li>NOT NULL for mandatory participation; CHECK for domain rules.</li></ul></section>
+</div><footer>★ = instructor-confirmed focus / strongest evidence · ◇ = remove first if copying under time pressure · This sheet must stay at home.</footer>
+</section>
+<section class="aid-page">
+<header class="aid-head"><div><p>DATABASE ENGINEERING · MEMORY COPY-MASTER · V2 · 22 JUL</p><h1>Page 2 · RA → SQL → checks</h1></div><strong>STUDY ONLY<br>NOT PERMITTED IN THE EXAM</strong></header>
+<div class="aid-grid">
+<section><h2>★ RA operators</h2><p>σ<sub>condition</sub>(R) rows · π<sub>attrs</sub>(R) columns · ρ rename · R ∪ S / ∩ / − require union compatibility · R × S pairs · R ⋈<sub>θ</sub> S matched pairs.</p><p class="mini">Write inside-out: restrict early, join on keys, project last. Natural join matches every same-named attribute—rename or use θ-join when accidental matches are possible.</p></section>
+<section><h2>★ SQL logical order</h2><p class="order">FROM/JOIN → WHERE → GROUP BY → HAVING → SELECT → DISTINCT → ORDER BY → LIMIT</p><p class="mini">WHERE filters rows before grouping. HAVING filters groups after aggregation. Every selected non-aggregate belongs in GROUP BY.</p></section>
+<section><h2>Aggregate frame</h2><pre>SELECT h.name, COUNT(b.room_id) AS visits
+FROM hotel h
+LEFT JOIN room r ON r.hotel_id=h.id
+LEFT JOIN booking b ON b.room_id=r.id
+GROUP BY h.id, h.name
+ORDER BY h.name;</pre><p class="mini">LEFT JOIN preserves zero-booking hotels. COUNT(non-null right key), not COUNT(*).</p></section>
+<section><h2>Anti-join / “never”</h2><pre>SELECT COUNT(*)
+FROM customer c
+WHERE NOT EXISTS (
+  SELECT 1 FROM orders o
+  JOIN order_item oi USING(order_id)
+  JOIN item i USING(item_id)
+  WHERE o.customer_id=c.customer_id
+    AND i.name LIKE 'A%'
+);</pre><p class="mini">Prefer NOT EXISTS; NOT IN becomes UNKNOWN if the subquery contains NULL.</p></section>
+<section><h2>★ Query translation</h2><p><b>“each/per”</b> → GROUP BY. <b>“only once”</b> → DISTINCT. <b>“total &gt;”</b> → SUM + HAVING. <b>“all, even none”</b> → LEFT JOIN. <b>“ever”</b> → EXISTS/join + DISTINCT. <b>“never”</b> → NOT EXISTS. <b>“between”</b> → BETWEEN (inclusive).</p></section>
+<section><h2>ACID + WAL</h2><p><b>A</b> all-or-nothing · <b>C</b> constraints preserved · <b>I</b> concurrent result equivalent to allowed serial behavior · <b>D</b> committed data survives failure.</p><p class="mini">WAL first: log record reaches durable storage before the dirty page. Checkpoint flushes dirty pages and records a recovery start point; too frequent ⇒ more I/O/full-page WAL.</p></section>
+<section><h2>Final 60-second audit</h2><ul><li>Aliases and join predicates present?</li><li>Scheduled vs actual time?</li><li>Date boundary inclusive/exclusive?</li><li>DISTINCT requested?</li><li>Zero rows must survive?</li><li>GROUP BY and HAVING in correct place?</li><li>Units, relation schema, and final result shown?</li></ul></section>
+<section><h2>◇ Low-return memory</h2><p>View = stored query. Procedure = CALL, may manage transaction. Function returns value/table and is used in expressions. Trigger runs automatically on an event. Learn after ER, normalization, RA and SELECT.</p></section>
+</div><footer>Exam: Fri 24 Jul 2026 · 90 min · no calculator · permitted aid is only an E/E or E/D dictionary.</footer>
+</section>
+</main>
+</body></html>

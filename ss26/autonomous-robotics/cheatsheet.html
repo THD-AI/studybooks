@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Autonomous Robotics — Personal Cheatsheet</title>
+<style>
+  :root{color-scheme:light}
+  *{box-sizing:border-box}
+  body{font:9.2pt/1.34 "Segoe UI",Arial,sans-serif;color:#000;margin:0;padding:6mm;background:#fff}
+  .cols{column-count:3;column-gap:5mm;column-rule:1px solid #bbb}
+  h1{font-size:11pt;margin:0 0 2mm;border-bottom:2px solid #000;padding-bottom:1mm}
+  h1 small{font-weight:400;font-size:7.5pt}
+  h2{font-size:8.8pt;background:#000;color:#fff;padding:.4mm 1.2mm;margin:2mm 0 1mm;break-after:avoid;letter-spacing:.02em}
+  h3{font-size:8.2pt;margin:1.4mm 0 .4mm;break-after:avoid;border-bottom:1px solid #999}
+  p,ul{margin:.5mm 0}
+  ul{padding-left:3.5mm}
+  li{margin:.3mm 0}
+  .eq{font-family:"Cambria Math",Georgia,serif;font-size:8.8pt;text-align:center;margin:.7mm 0;break-inside:avoid}
+  .eq.l{text-align:left}
+  .box{border:1px solid #000;padding:.8mm 1.2mm;margin:.8mm 0;break-inside:avoid}
+  .def{margin:.4mm 0}
+  .def b{background:#e8e8e8;padding:0 .6mm}
+  table{border-collapse:collapse;width:100%;font-size:8pt;margin:.6mm 0;break-inside:avoid}
+  td,th{border:1px solid #888;padding:.3mm .8mm;text-align:center}
+  th{background:#e8e8e8}
+  .m{display:inline-block;font-weight:700;font-size:7pt;border:1px solid #000;border-radius:2px;padding:0 .8mm;vertical-align:.2mm}
+  .on{background:#ddd}
+  .frac{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;line-height:1.05;font-size:.92em}
+  .frac>span:first-child{border-bottom:.7px solid #000;padding:0 .4mm}
+  .mx{display:inline-block;vertical-align:middle;border-left:1px solid #000;border-right:1px solid #000;padding:.2mm 1mm;line-height:1.15;text-align:center;font-size:.92em}
+  .sec{break-inside:avoid-column}
+  .tiny{font-size:7.4pt;color:#222}
+  @media print{@page{size:A4;margin:7mm} body{padding:0} .noprint{display:none}}
+  .noprint{background:#ffedcc;border:1px solid #d90;padding:2mm;margin-bottom:3mm;font-size:9pt}
+</style></head><body>
+<div class="noprint"><b>Print me:</b> Ctrl+P → A4 → margins "Default/None" → scale 100% → background graphics on. Fits ~2 pages. <span class="m on">✔</span> = already printed on the official 2026 formula sheet (don't re-copy if space is tight) · <span class="m">●</span> = NOT on the official sheet — this is why this cheatsheet exists.</div>
+<h1>Autonomous Robotics — exam cheatsheet <small>· SS 2026 · companion to the official formula sheet + fx-991CW</small></h1>
+<div class="cols">
+
+<h2>0 · Trig, vectors, calculus basics</h2>
+<table><tr><th>θ</th><th>0°</th><th>30°</th><th>45°</th><th>60°</th><th>90°</th></tr>
+<tr><td>sin</td><td>0</td><td>1/2</td><td>√2/2</td><td>√3/2</td><td>1</td></tr>
+<tr><td>cos</td><td>1</td><td>√3/2</td><td>√2/2</td><td>1/2</td><td>0</td></tr>
+<tr><td>tan</td><td>0</td><td>1/√3</td><td>1</td><td>√3</td><td>∞</td></tr></table>
+<p class="tiny">sin(180−θ)=sin θ · cos(180−θ)=−cos θ · sin(−θ)=−sin θ · cos(−θ)=cos θ. E.g. cos 135°=−√2/2, sin(−120°)=−√3/2, cos(−120°)=−½.</p>
+<p class="def"><span class="m">●</span> <b>atan2(y,x)</b>: angle of (x,y) in the correct quadrant (atan(y/x) is wrong for x&lt;0). Angle of (3,3)=45°; of (−2,−2√3): atan2 gives −120°.</p>
+<p class="def">Vector norm ‖v‖=√(v<sub>x</sub>²+v<sub>y</sub>²+v<sub>z</sub>²); unit vector v/‖v‖; dot a·b=‖a‖‖b‖cos θ; cross x̂×ŷ=ẑ (right-hand rule).</p>
+<p class="def">Chain rule: d/dt f(s(t)) = f′(s)·ṡ. Product: (fg)′=f′g+fg′. ẋ=dx/dt (rate), ẍ=acceleration.</p>
+<p class="def">Small angle: sin θ≈θ, cos θ≈1 (θ in rad).</p>
+
+<h2>1 · State-space &amp; motion</h2>
+<p class="def"><span class="m on">✔</span> Continuous: <b>ẋ=f(x,u), y=h(x,u)</b> · discrete: <b>x<sub>k+1</sub>=f<sub>k</sub>(x<sub>k</sub>,u<sub>k</sub>)</b>. State x = minimal info making the future independent of the past; u = control input; y = sensor output.</p>
+<div class="box"><span class="m">●</span> <b>Constant acceleration over Δt</b>
+<div class="eq">v<sub>t+1</sub> = v<sub>t</sub> + aΔt&emsp;x<sub>t+1</sub> = x<sub>t</sub> + v<sub>t</sub>Δt + ½aΔt²</div>
+Invert for a: <span class="eq l" style="display:inline">a = 2(x₁−x₀−v₀Δt)/Δt²</span> (unique only if a const.)</div>
+<p class="def"><span class="m">●</span> Position accumulates more error than velocity (integration sums errors) → dead reckoning drifts → external sensors needed.</p>
+<p class="def"><span class="m">●</span> Trajectory = path X(s) + time scaling s(t): <b>Ẋ=X′(s)ṡ; Ẍ=X″ṡ²+X′s̈</b> (don't drop the s̈ term).</p>
+<p class="def"><span class="m">●</span> Integrators: Euler x+=f·dt (err O(dt²)/step); midpoint: slope at half-step; RK4: 4 slopes weighted 1-2-2-1 (err O(dt⁵)/step).</p>
+<p class="def"><span class="m">●</span> Double integrator, state (x,y,v<sub>x</sub>,v<sub>y</sub>), u=(a<sub>x</sub>,a<sub>y</sub>): x<sub>t+1</sub>=Ax<sub>t</sub>+Bu<sub>t</sub>, A rows: [1 0 Δt 0; 0 1 0 Δt; 0 0 1 0; 0 0 0 1], B: [½Δt² 0; 0 ½Δt²; Δt 0; 0 Δt].</p>
+
+<h2>2 · Wheels &amp; constraints</h2>
+<p class="def"><span class="m on">✔</span> Holonomic g(q,t)=0 (limits positions); velocity constraint A(q,t)q̇=b (non-holonomic if not integrable → limits velocities, e.g. no sideways motion). Omni robot = holonomic; diff-drive/car = non-holonomic.</p>
+<p class="def"><span class="m on">✔</span> No-slip: ẋ sin θ − ẏ cos θ = 0 · rolling: ẋ cos θ + ẏ sin θ = rφ̇.</p>
+<div class="box"><span class="m">●</span> <b>Differential drive</b> (r wheel radius, L separation)
+<div class="eq">v = <span class="frac"><span>r(ω<sub>R</sub>+ω<sub>L</sub>)</span><span>2</span></span>&emsp;ω = <span class="frac"><span>r(ω<sub>R</sub>−ω<sub>L</sub>)</span><span>L</span></span>&emsp;R<sub>turn</sub> = <span class="frac"><span>v</span><span>ω</span></span></div>
+wheel speed v<sub>i</sub>=rω<sub>i</sub>; equal ω's → straight; opposite → spin in place.</div>
+<p class="def"><span class="m">●</span> <b>Unicycle</b>: ẋ=v cos θ, ẏ=v sin θ, θ̇=ω.</p>
+<div class="box"><span class="m">●</span> <b>Bicycle</b> (wheelbase L, steering α)
+<div class="eq">x⁺=x+v cosθΔt · y⁺=y+v sinθΔt · θ⁺=θ+<span class="frac"><span>v tan α</span><span>L</span></span>Δt</div>
+turning radius R=L/tan α. Steering error → orientation error (redirects all later motion); velocity error → distance error.</div>
+
+<h2>3 · Lagrangian mechanics</h2>
+<p class="def"><span class="m on">✔</span> T=½mv², V=mgy, L=T−V; Euler–Lagrange: d/dt(∂L/∂q̇)−∂L/∂q = Q.</p>
+<p class="def"><span class="m on">✔</span> Pendulum (mass m, rod l): T=½ml²θ̇², V=mgl(1−cosθ) → ml²θ̈+mgl sinθ=0, θ̈=−(g/l)sinθ.</p>
+<div class="box"><span class="m">●</span> <b>With viscous friction b</b>: add Q=−bθ̇ (non-conservative → right side, NOT into V):
+<div class="eq">ml²θ̈ + bθ̇ + mgl sin θ = 0</div>
+(Ex 7: m=2, l=1, b=0.1, g=10 → 2θ̈+0.1θ̇+20 sinθ=0.) I=ml² (point mass). Alternative: torque balance Iθ̈=−mgl sinθ−bθ̇.</div>
+
+<h2>4 · Rotations (SO(3))</h2>
+<p class="def"><span class="m">●</span> R∈SO(3): <b>RᵀR=I, det R=1, R⁻¹=Rᵀ</b>. Columns of R<sub>sa</sub> = axes of {a} in {s} coords. Build 3rd axis: ẑ=x̂×ŷ.</p>
+<p class="def"><span class="m">●</span> Subscript cancellation: R<sub>ab</sub>R<sub>bc</sub>=R<sub>ac</sub>; R<sub>ab</sub>p<sub>b</sub>=p<sub>a</sub>; R<sub>ab</sub>=R<sub>as</sub>R<sub>sb</sub>=R<sub>sa</sub>ᵀR<sub>sb</sub>.</p>
+<p class="def"><span class="m">●</span> <b>Composition side</b>: R<sub>sb′</sub>=R·R<sub>sb</sub> = rotate about <b>world</b>-frame axis (premultiply); R<sub>sb″</sub>=R<sub>sb</sub>·R = rotate about <b>body</b>-frame axis (postmultiply). Fixed-frame sequence ⇒ stack left: last applied is leftmost.</p>
+<div class="box"><span class="m">●</span> <b>Elementary rotations</b> (✔ only R<sub>y</sub> is on the sheet)
+<div class="eq l">R<sub>x</sub>(γ)=<span class="mx">1 0 0<br>0 cosγ −sinγ<br>0 sinγ cosγ</span>&ensp;R<sub>y</sub>(β)=<span class="mx">cosβ 0 sinβ<br>0 1 0<br>−sinβ 0 cosβ</span></div>
+<div class="eq l">R<sub>z</sub>(α)=<span class="mx">cosα −sinα 0<br>sinα cosα 0<br>0 0 1</span>&ensp;<span class="tiny">pattern: 1 on the axis; −sin above +sin except R<sub>y</sub> (flipped)</span></div>
+ZYX Euler (α,β,γ) body-frame: R = R<sub>z</sub>(α)R<sub>y</sub>(β)R<sub>x</sub>(γ).</div>
+<p class="def"><span class="m">●</span> Skew matrix of ω=(ω₁,ω₂,ω₃): [ω] = rows [0 −ω₃ ω₂; ω₃ 0 −ω₁; −ω₂ ω₁ 0]; [ω]ᵀ=−[ω]; [ω]x=ω×x.</p>
+<p class="def"><span class="m">●</span> Axis-angle/exp coords ω̂θ (‖ω̂‖=1): <b>Rodrigues</b> R=e<sup>[ω̂]θ</sup>=I+sinθ[ω̂]+(1−cosθ)[ω̂]²; angular velocity ω=ω̂θ̇; ṘR⁻¹=[ω<sub>s</sub>], R⁻¹Ṙ=[ω<sub>b</sub>].</p>
+<p class="def">2D rotation: R(θ)=[cosθ −sinθ; sinθ cosθ]; circular motion about C: P(θ)=C+R(θ)r<sub>CP</sub>.</p>
+
+<h2>5 · Rigid transforms</h2>
+<p class="def"><span class="m on">✔</span> <sup>c</sup>P=<sup>c</sup>R<sub>W</sub><sup>W</sup>P+<sup>c</sup>t<sub>W</sub>; homogeneous <sup>c</sup>T<sub>W</sub>=[R t; 0 0 0 1], <sup>c</sup>P̃=<sup>c</sup>T<sub>W</sub><sup>W</sup>P̃ (append 1 to the point).</p>
+<div class="box"><span class="m on">✔</span> <b>Inverse</b> — translation is NOT −t:
+<div class="eq">T⁻¹ = [Rᵀ  −Rᵀt; 0 0 0 1]&emsp;⇔&emsp;P<sub>W</sub>=Rᵀ(P<sub>C</sub>−t)</div></div>
+<p class="def">Planar pose: T=[cosθ −sinθ x; sinθ cosθ y; 0 0 1]. Camera center in world = −Rᵀt.</p>
+
+<h2>6 · Camera projection</h2>
+<p class="def"><span class="m on">✔</span> Pipeline: P<sub>W</sub> →(R,t)→ P<sub>C</sub> →(÷Z<sub>C</sub>)→ (x<sub>n</sub>,y<sub>n</sub>) →(K)→ (u,v). x<sub>n</sub>=X<sub>C</sub>/Z<sub>C</sub>, y<sub>n</sub>=Y<sub>C</sub>/Z<sub>C</sub>; u=f<sub>x</sub>x<sub>n</sub>+c<sub>x</sub>, v=f<sub>y</sub>y<sub>n</sub>+c<sub>y</sub>; K=[f<sub>x</sub> s c<sub>x</sub>; 0 f<sub>y</sub> c<sub>y</sub>; 0 0 1]; λp̃=K[R|t]P̃<sub>W</sub>; normalize (ũ,ṽ,w̃)↦(ũ/w̃, ṽ/w̃).</p>
+<p class="def"><span class="m">●</span> <b>Back-projection</b>: x<sub>n</sub>=(u−c<sub>x</sub>)/f<sub>x</sub>, y<sub>n</sub>=(v−c<sub>y</sub>)/f<sub>y</sub>; ray d=(x<sub>n</sub>,y<sub>n</sub>,1); with known depth: X<sub>C</sub>=x<sub>n</sub>Z<sub>C</sub>, Y<sub>C</sub>=y<sub>n</sub>Z<sub>C</sub>. Pixel ↦ ray, not point (depth lost).</p>
+<p class="def">Visible ⇔ Z<sub>C</sub>&gt;0 (Z=0 unprojectable). Metric image plane: x=f·X<sub>C</sub>/Z<sub>C</sub> (f in length units). Offsets scale like 1/Z<sub>C</sub>.</p>
+<p class="def"><b>Intrinsic</b>=internal geometry (f<sub>x</sub>,f<sub>y</sub>,c<sub>x</sub>,c<sub>y</sub>,skew; in K; fixed by hardware). <b>Extrinsic</b>=camera pose (R,t; changes with motion). <b>Principal point</b>=(c<sub>x</sub>,c<sub>y</sub>) where optical axis hits image; resolution≈2·(c<sub>x</sub>,c<sub>y</sub>). Skew≠0 only for non-perpendicular pixel axes. Barrel distortion: lines bulge outward (magnification ↓ with radius, wide-angle); pincushion: inward (telephoto). Homogeneous coords make translation+rotation+projection all matrix products.</p>
+
+<h2>7 · Ceiling markers (course setup)</h2>
+<p class="def"><span class="m on">✔</span> Camera looks up, marker height h → all points share Z<sub>C</sub>=h:
+<b>s = f/h [px/m]; Δu = sΔX; ΔX = Δu/s</b>; h doubles → s halves.</p>
+<p class="def"><span class="m on">✔</span> Heading: <b>θ<sub>r</sub> = θ<sub>m</sub> − θ<sub>i</sub></b> (marker's true − observed orientation). Sheet page 2!</p>
+<p class="def"><span class="m">●</span> Pixel noise → metric: ΔX<sub>err</sub>=Δu<sub>err</sub>/s. One symmetric marker fixes position not heading → need 2 markers (or asymmetric marker). Ceiling: fixed, unoccluded, rarely moved. West=−x, North=+y.</p>
+
+<h2>8 · Triangulation, SfM, flow, events</h2>
+<p class="def"><span class="m">●</span> <b>Triangulation</b>: 3D point = intersection of viewing rays from ≥2 known poses; each view: λp̃=PX̃ (P=K[R|t], 3×4) → 2 linear homogeneous eqs → stack: <b>AX̃=0</b>; solve: SVD A=UΣVᵀ, X̃ = last column of V (smallest σ; minimizes ‖AX̃‖ on ‖X̃‖=1).</p>
+<p class="def"><span class="m">●</span> <b>Reprojection error</b> ‖p−p̂‖₂. <b>Baseline</b> ↑ → depth accuracy ↑ but matching harder. Stereo depth: Z=f·b/d (d=disparity).</p>
+<p class="def"><span class="m">●</span> <b>SfM</b> = one moving camera, unknown poses; estimates structure+motion jointly (scale unknown). Pipeline: detect → match → pose est. → triangulate → <b>bundle adjustment</b> (joint nonlinear refinement of all poses+points minimizing total reprojection error).</p>
+<p class="def"><span class="m">●</span> <b>Optical flow</b>: I<sub>x</sub>u+I<sub>y</sub>v+I<sub>t</sub>=0 (1 eq, 2 unknowns). Assumes <b>brightness constancy</b> (+ small motion). <b>Aperture problem</b>: only flow along the gradient is observable — motion along an edge invisible.</p>
+<p class="def"><span class="m">●</span> <b>Event camera</b>: async per-pixel events (x,y,t,p) on log-brightness change (p=polarity ±1) vs sync full frames; µs latency, high dynamic range, no absolute intensity.</p>
+
+<h2>9 · Bayes filter · KF · EKF · SLAM</h2>
+<div class="box"><span class="m">●</span> <b>Bayes' rule</b> (write normalizer separately!)
+<div class="eq">P(A|z) = <span class="frac"><span>P(z|A)P(A)</span><span>P(z)</span></span>,&ensp;P(z)=Σ<sub>i</sub>P(z|A<sub>i</sub>)P(A<sub>i</sub>)</div>
+check: posteriors sum to 1; belief moves toward sensor-favored hypothesis.</div>
+<p class="def"><span class="m">●</span> <b>Bayes filter</b> — predict: <span style="text-decoration:overline">bel</span>(x<sub>t</sub>)=∫p(x<sub>t</sub>|u<sub>t</sub>,x<sub>t−1</sub>)bel(x<sub>t−1</sub>)dx (uncertainty grows); correct: bel(x<sub>t</sub>)=η·p(z<sub>t</sub>|x<sub>t</sub>)<span style="text-decoration:overline">bel</span>(x<sub>t</sub>) (shrinks).</p>
+<p class="def"><span class="m">●</span> p(x<sub>t</sub>|u<sub>t</sub>,x<sub>t−1</sub>)=<b>motion model</b>; p(z<sub>t</sub>|x<sub>t</sub>)=<b>sensor model</b>; bel(x<sub>t</sub>)=<b>belief</b> (posterior over states given all data).</p>
+<div class="box"><span class="m">●</span> <b>Kalman filter</b> (linear + Gaussian)
+<div class="eq l">predict: μ̄=Aμ+Bu;&ensp;Σ̄=AΣAᵀ+R</div>
+<div class="eq l">gain: K=Σ̄Cᵀ(CΣ̄Cᵀ+Q)⁻¹</div>
+<div class="eq l">update: μ⁺=μ̄+K(z−Cμ̄);&ensp;Σ⁺=(I−KC)Σ̄</div>
+innovation=z−Cμ̄ (measured−expected); R=process noise, Q=measurement noise. Gaussian: fully described by (μ,Σ) and closed under linear+Gaussian ops → efficient exact updates.</div>
+<p class="def"><span class="m">●</span> <b>EKF</b>: nonlinear f,h → linearize at estimate: A=∂f/∂x, C=∂h/∂x (Jacobians). Use when uncertainty ≈ Gaussian + good initial guess; <b>particle filter</b> for global/multi-modal localization.</p>
+<p class="def"><span class="m">●</span> <b>SLAM</b>: chicken-and-egg — localization needs map, mapping needs pose → estimate jointly. EKF-SLAM state: (x, y, θ, m<sub>1x</sub>, m<sub>1y</sub>, m<sub>2x</sub>, m<sub>2y</sub>, …). <b>Data association</b> = which measurement ↔ which landmark; wrong association corrupts filter.</p>
+<p class="def"><span class="m">●</span> Range → circle (2D) / sphere (3D) around landmark (trilateration d=v<sub>sound</sub>Δt); ≥2 identified landmarks → unique pose. Identical rooms → <b>multi-modal belief</b>. Known quantities (e.g. compass heading) are inputs, not state.</p>
+
+<h2>10 · Planning &amp; control</h2>
+<p class="def"><span class="m on">✔</span> Open-loop u=u<sub>planned</sub>(t) (no sensing, drifts) · closed-loop policy u=π(x) · feedback u=K(x<sub>ref</sub>−x).</p>
+<div class="box"><span class="m">●</span> <b>Dijkstra: f(n)=g(n)</b> · <b>A*: f(n)=g(n)+h(n)</b>
+g=cost from start, h=estimated cost to goal. <b>Admissible</b>: h never overestimates → A* optimal. <b>Consistent</b>: triangle inequality → no reopening. h≡0 ⇒ A*=Dijkstra. Good h → fewer expansions, goal-directed.</div>
+<p class="def"><span class="m">●</span> Open-loop grid localization: belief = set of possible cells; M (drive to wall) collapses corridors to end cells; with step counting, each M's count is a measurement pruning hypotheses (predict+correct).</p>
+
+<h2>11 · FSM · RL · ROS (definitions)</h2>
+<p class="def"><span class="m">●</span> <b>FSM</b>: states=behaviors, labeled transitions=events; global interrupt (battery low→Recharge). + simple/interpretable/verifiable; − state explosion, poor under uncertainty.</p>
+<p class="def"><span class="m">●</span> <b>RL</b>: <b>state</b>=agent's situation; <b>action</b>=chosen control; <b>reward</b>=scalar feedback per step, maximize cumulative sum; <b>policy</b> π: states→actions, u=π(x) or π(u|x) — the thing RL learns.</p>
+<p class="def"><span class="m">●</span> <b>ROS</b>: <b>node</b>=process doing one job; <b>topic</b>=named pub/sub channel; <b>message</b>=typed data on a topic; <b>master</b> (ROS 1)=discovery/name service only — traffic is peer-to-peer.</p>
+
+<h2>12 · Sanity checks &amp; traps</h2>
+<ul>
+<li>Any rotation: det R=1, ‖columns‖=1, RRᵀ=I; rotated vectors keep norm. (Caught a real error in official Solution 4!)</li>
+<li>Probabilities sum to 1 · units survive formulas (rad/s·m=m/s) · Z<sub>C</sub>≤0 not visible.</li>
+<li>Inverse transform translation = −Rᵀt (never just −t, unless R=I).</li>
+<li>Sheet's camera formulas assume CAMERA coords — transform world points first.</li>
+<li>Sheet's pendulum is frictionless — question with b needs +bθ̇ term.</li>
+<li>Ẍ needs BOTH X″ṡ² and X′s̈ terms.</li>
+<li>Fixed-axis rotations premultiply (left); body-axis postmultiply (right).</li>
+<li>30°/45°/60° answers in surds (sheet p.2), don't round early; store calculator intermediates in A–F.</li>
+<li>fx-991CW: SETTINGS→Angle Unit→Degrees; check sin 30=0.5. Matrix app for 3×3 products/Det; Equation app for linear systems.</li>
+</ul>
+<h2>13 · Worked micro-examples (pattern anchors)</h2>
+<p class="def"><b>Diff drive</b> r=0.1, L=0.5, ω<sub>L</sub>=4, ω<sub>R</sub>=6: v=0.1·10/2=<b>0.5 m/s</b>; ω=0.1·2/0.5=<b>0.4 rad/s</b>; R=0.5/0.4=<b>1.25 m</b>.</p>
+<p class="def"><b>Projection</b> K=[800 0 320; 0 800 240; 0 0 1], P<sub>C</sub>=(1,2,5): x<sub>n</sub>=0.2, y<sub>n</sub>=0.4 → u=800·0.2+320=<b>480</b>, v=800·0.4+240=<b>560</b>.</p>
+<p class="def"><b>Back-projection</b> p=(720,440), same K: x<sub>n</sub>=(720−320)/800=0.5, y<sub>n</sub>=0.25 → ray (0.5,0.25,1); depth 4 → P<sub>C</sub>=(2,1,4).</p>
+<p class="def"><b>World→pixel</b> P<sub>W</sub>=(3,2,10), t=(−1,0,0), R=I: P<sub>C</sub>=(2,2,10) → u=800·0.2+320=<b>480</b>, v=800·0.2+240=<b>400</b>.</p>
+<p class="def"><b>Bayes</b> P(A)=0.7, P(z|A)=0.9, P(B)=0.3, P(z|B)=0.2: P(z)=0.63+0.06=0.69 → P(A|z)=0.63/0.69≈<b>0.913</b>, P(B|z)≈<b>0.087</b>.</p>
+<p class="def"><b>Ceiling marker</b> f=800, h=4: s=<b>200 px/m</b>; move 0.5 m → <b>100 px</b>; ±10 px noise → ±10/200=<b>±5 cm</b>; heading 45°−20°=<b>25°</b>.</p>
+<p class="def"><b>Pendulum</b> m=2, l=1, b=0.1, g=10: 2θ̈+0.1θ̇+20 sinθ=0 ⇔ θ̈+0.05θ̇+10 sinθ=0.</p>
+<p class="def"><b>Optical flow</b> I<sub>x</sub>=2, I<sub>y</sub>=−1, I<sub>t</sub>=−3, u=1: 2−v−3=0 → <b>v=−1</b> (check: 2+1−3=0 ✓).</p>
+<p class="def"><b>Reprojection</b> p=(320,200), p̂=(312,198): ‖(8,2)‖=√68=<b>2√17≈8.25 px</b>.</p>
+<p class="def"><b>EKF-SLAM state</b>, 2 landmarks: (x, y, θ, m<sub>1x</sub>, m<sub>1y</sub>, m<sub>2x</sub>, m<sub>2y</sub>)ᵀ ∈ ℝ⁷.</p>
+<p class="def"><b>Tetrahedron EKF dims</b>: state ℝ¹² (p,a,v,ω); z ∈ ℝ⁸ (4 pts × 2); A 12×12, C 8×12.</p>
+<p class="tiny"><b>Mock test</b> (Moodle "Test") = collection Ex 1–7: Bayes filter, EKF modeling, frames, rotation composition, rigid body, path scaling, pendulum — rehearse those first. Exam 17.07.2026 · allowed: official sheet + fx-991CW.</p>
+</div>
+</body></html>
