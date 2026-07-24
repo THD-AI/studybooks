@@ -4,28 +4,28 @@
 </style></head><body>
 <main class="aid">
 <section class="aid-page">
-<header class="aid-head"><div><p>DATABASE ENGINEERING · MEMORY COPY-MASTER · V2 · 22 JUL</p><h1>Page 1 · ER → schema → 3NF</h1></div><strong>STUDY ONLY<br>NOT PERMITTED IN THE EXAM</strong></header>
+<header class="aid-head"><div><p>DATABASE ENGINEERING · MEMORY COPY-MASTER · V5 · 24 JUL</p><h1>Page 1 · ER → schema → BCNF</h1></div><strong>STUDY ONLY<br>NOT PERMITTED IN THE EXAM</strong></header>
 <div class="aid-grid">
-<section><h2>★ ER question: draw in this order</h2><ol><li>Nouns → entity rectangles; stable descriptors → attributes.</li><li>Underline each identifier. Split address only if the prompt exposes its parts.</li><li>Verbs → relationship diamonds. Put dates/quantity/price on the relationship they describe.</li><li>Add both cardinalities last; test with one sentence from each side.</li></ol><p class="mini"><b>M:N with history:</b> GUEST — BOOKS(start_date,end_date) — ROOM. Repeat booking means the relational key must distinguish dates.</p></section>
+<section><h2>★ ER question: draw in this order</h2><ol><li>Nouns → entity rectangles; stable descriptors → attributes.</li><li>Underline each identifier. Split address only if the prompt exposes its parts.</li><li>Verbs → relationship diamonds. Put dates/quantity/price on the relationship they describe.</li><li>Add both cardinalities last; test with one sentence from each side.</li></ol><p class="mini"><b>M:N with history:</b> GUEST — BOOKING(start_date,end_date) — ROOM. Repeat booking means the relational key must distinguish dates.</p></section>
 <section><h2>★ ER → relations</h2><p><b>Entity</b> → table + PK. <b>1:N</b> → FK on N side. <b>1:1</b> → FK on mandatory/total side + UNIQUE. <b>M:N</b> → bridge with both FKs; add relationship attributes. <b>Multivalued</b> → own table. <b>Recursive</b> → self-FK or bridge.</p><p class="mini">HOTEL(<u>hotel_id</u>, …)<br>ROOM(<u>room_id</u>, hotel_id FK, type_id FK, …)<br>BOOKING(<u>room_id FK, guest_id FK, start_date</u>, end_date)</p></section>
 <section><h2>★ Key by closure</h2><p>Start with attributes never on any FD right-hand side. Repeatedly add RHS when LHS ⊆ closure. If closure = all attributes, it is a superkey. Remove each attribute in turn; if none can be removed, candidate key.</p><p class="mini">R(A,B,C,D,E), A→C, B→C, E→D: RHS={C,D}; start ABE; (ABE)<sup>+</sup>=ABCDE ⇒ key ABE.</p></section>
-<section><h2>★ Normal forms</h2><p><b>1NF</b> one value/cell. <b>2NF</b> 1NF + no non-prime attribute depends on a proper subset of a candidate key. <b>3NF</b> for every non-trivial X→A: X superkey or A prime. <b>BCNF</b> every determinant X is a superkey.</p><p class="mini">Decompose by meaning: STUDENT(sid,…), ACTIVITY(aid,…), PARTICIPATION(sid,aid,hours), CLASS(class,leader). Each fact lives once.</p></section>
+<section><h2>★ Normal forms</h2><p><b>1NF</b> one value/cell. <b>2NF</b> 1NF + no non-prime attribute depends on a proper subset of a candidate key. <b>3NF</b> for every non-trivial X→A: X superkey or A prime. <b>BCNF</b> every determinant X is a superkey.</p><p class="mini">Hotel proof: IDs→own facts; (room,guest,start)→end. Scalar cells; no partial/transitive FD; every determinant is a key ⇒ BCNF. Never infer ZIP→City from a sample.</p></section>
 <section><h2>DDL frame</h2><pre>CREATE TABLE child (
   id integer PRIMARY KEY,
-  parent_id integer NOT NULL,
+  name varchar(255) NOT NULL,
+  parent_id integer NOT NULL REFERENCES parent(id),
   amount numeric(10,2) CHECK (amount BETWEEN 0 AND 10000),
   start_date date NOT NULL,
   end_date date NOT NULL,
-  FOREIGN KEY (parent_id) REFERENCES parent(id),
   CHECK (end_date > start_date)
-);</pre></section>
+);</pre><p class="mini">PostgreSQL: connect to database d → CREATE SCHEMA s → CREATE TABLE s.table(...). A schema is a namespace inside one database.</p><p class="mini">Easy FK: column → type → NOT NULL → REFERENCES table(key). Use varchar(50) for compact codes/address parts and varchar(255) for names/free text; these are conventions, not presets.</p></section>
 <section><h2>Paper checks</h2><ul><li>Every table has a PK.</li><li>Every FK points to a declared PK/UNIQUE key.</li><li>ZIP/phone/card are text, not arithmetic numbers.</li><li>Bridge PK contains repeat discriminator when repeats are allowed.</li><li>NOT NULL for mandatory participation; CHECK for domain rules.</li></ul></section>
 </div><footer>★ = instructor-confirmed focus / strongest evidence · ◇ = remove first if copying under time pressure · This sheet must stay at home.</footer>
 </section>
 <section class="aid-page">
-<header class="aid-head"><div><p>DATABASE ENGINEERING · MEMORY COPY-MASTER · V2 · 22 JUL</p><h1>Page 2 · RA → SQL → checks</h1></div><strong>STUDY ONLY<br>NOT PERMITTED IN THE EXAM</strong></header>
+<header class="aid-head"><div><p>DATABASE ENGINEERING · MEMORY COPY-MASTER · V5 · 24 JUL</p><h1>Page 2 · RA → SQL → checks</h1></div><strong>STUDY ONLY<br>NOT PERMITTED IN THE EXAM</strong></header>
 <div class="aid-grid">
-<section><h2>★ RA operators</h2><p>σ<sub>condition</sub>(R) rows · π<sub>attrs</sub>(R) columns · ρ rename · R ∪ S / ∩ / − require union compatibility · R × S pairs · R ⋈<sub>θ</sub> S matched pairs.</p><p class="mini">Write inside-out: restrict early, join on keys, project last. Natural join matches every same-named attribute—rename or use θ-join when accidental matches are possible.</p></section>
+<section><h2>★ RA operators</h2><p>σ rows · π columns · ρ rename · ∪ / ∩ / − sets · × pairs · ⋈<sub>θ</sub> matched pairs. <b>Extended:</b> ⟕ left join · γ group/aggregate · τ sort.</p><p class="mini">RA→SQL: σ=WHERE; π=SELECT DISTINCT; ⋈=JOIN; ⟕=LEFT JOIN; γ=GROUP BY; σ after γ=HAVING; τ=ORDER BY. State “extended RA” for COUNT/SUM/order.</p></section>
 <section><h2>★ SQL logical order</h2><p class="order">FROM/JOIN → WHERE → GROUP BY → HAVING → SELECT → DISTINCT → ORDER BY → LIMIT</p><p class="mini">WHERE filters rows before grouping. HAVING filters groups after aggregation. Every selected non-aggregate belongs in GROUP BY.</p></section>
 <section><h2>Aggregate frame</h2><pre>SELECT h.name, COUNT(b.room_id) AS visits
 FROM hotel h
