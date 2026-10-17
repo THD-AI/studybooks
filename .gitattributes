@@ -1,2 +1,9 @@
 # Studybooks are generated artefacts: store and serve them byte-for-byte.
 * -text
+
+# Keep community documents consistent across platforms.
+*.md text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+# Historical source copies retain their original bytes and whitespace.
+archive/** -text -whitespace

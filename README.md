@@ -1,8 +1,8 @@
-# Course Studybooks
+# THD AI – course studybooks
 
 Self-contained HTML studybooks for the AIN-B courses, published with GitHub Pages:
 
-**https://thd-ai-2023.github.io/studybooks/**
+**https://thd-ai.github.io/studybooks/**
 
 Each studybook is a single HTML file with all styling and figures embedded, so it
 loads once and then reads fine on a phone, offline, or from a local copy.
@@ -43,3 +43,7 @@ The underlying lecture slides, exercise sheets and past exam papers are **not**
 published in this repository. A few citation links inside the studybooks point at
 those PDFs by relative path, so they resolve only in the local course folder, not
 on the published site.
+
+## Contribute
+
+Corrections and student-written explanations are welcome. Name the course and semester, explain the correction, and preserve source attribution. Read the [community guide](https://github.com/THD-AI/.github/blob/main/CONTRIBUTING.md), or ask in [Discussions](https://github.com/orgs/THD-AI/discussions).
